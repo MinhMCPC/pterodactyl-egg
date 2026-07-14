@@ -4,16 +4,16 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2026-07-14T15:00:00+07:00",
-    "name": "Garage S3",
+    "exported_at": "2026-07-14T16:00:00+07:00",
+    "name": "Garage S3 WebUI",
     "author": "minhmcpc.tao@gmail.com",
-    "description": "Garage is an open-source distributed object storage service tailored for self-hosting. It implements the Amazon S3 API.",
+    "description": "Garage is an open-source distributed object storage service tailored for self-hosting. This egg uses the khairul169 fork with integrated WebUI.",
     "features": [],
     "docker_images": {
         "ghcr.io/ptero-eggs/yolks:debian": "ghcr.io/ptero-eggs/yolks:debian"
     },
     "file_denylist": [],
-    "startup": "bash -c 'if [ \"${UPDATE_BINARY}\" == \"true\" ] || [ \"${UPDATE_BINARY}\" == \"1\" ]; then echo \"Updating Garage binary to ${GARAGE_VERSION}...\" && ARCH=$([[ \"$(uname -m)\" == \"x86_64\" ]] && echo \"x86_64-unknown-linux-musl\" || echo \"aarch64-unknown-linux-musl\") && rm -f garage && wget -qO garage \"https://garagehq.deuxfleurs.fr/_releases/${GARAGE_VERSION}/${ARCH}/garage\" && chmod +x garage; fi; exec ./garage -c garage.toml server'",
+    "startup": "bash -c 'if [ \"${UPDATE_BINARY}\" == \"true\" ] || [ \"${UPDATE_BINARY}\" == \"1\" ]; then echo \"Updating Garage to latest release...\"; VER=$(curl -s https://api.github.com/repos/khairul169/garage-webui/releases/latest | grep \"tag_name\" | cut -d \\\" -f 4); ARCH=$([[ \"$(uname -m)\" == \"x86_64\" ]] && echo \"amd64\" || echo \"arm64\"); rm -f garage; wget -qO garage \"https://github.com/khairul169/garage-webui/releases/download/${VER}/garage-webui-${VER}-linux-${ARCH}\"; chmod +x garage; fi; exec ./garage -c garage.toml server'",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"INFO garage::server: Garage is booting\"\r\n}",
@@ -22,22 +22,12 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!/bin/bash\r\napt update\r\napt install -y curl wget unzip\r\ncd /mnt/server\r\n\r\n# Kéo file install từ github của bạn về và chạy\r\ncurl -sSL https://raw.githubusercontent.com/MinhMCPC/pterodactyl-egg/refs/heads/main/Applications/garage.sh | bash\r\n",
+            "script": "#!/bin/bash\r\napt update\r\napt install -y curl wget unzip jq\r\ncd /mnt/server\r\n\r\ncurl -sSL https://raw.githubusercontent.com/MinhMCPC/pterodactyl-egg/main/Applications/garage-s3/garage.sh | bash\r\n",
             "container": "ghcr.io/ptero-eggs/installers:debian",
             "entrypoint": "bash"
         }
     },
     "variables": [
-        {
-            "name": "Garage Version",
-            "description": "Phiên bản Garage S3 muốn cài đặt/cập nhật.",
-            "env_variable": "GARAGE_VERSION",
-            "default_value": "v0.9.1",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string",
-            "field_type": "text"
-        },
         {
             "name": "S3 API Port",
             "description": "Cổng để upload/download file.",
@@ -60,7 +50,7 @@
         },
         {
             "name": "Admin Port",
-            "description": "Cổng quản trị để gõ lệnh tạo key/bucket.",
+            "description": "Cổng quản trị (WebUI & Admin API).",
             "env_variable": "ADMIN_PORT",
             "default_value": "3903",
             "user_viewable": true,
@@ -70,7 +60,7 @@
         },
         {
             "name": "Web Port",
-            "description": "Cổng cho S3 Web Server. Nếu để trống, hệ thống sẽ tự động dùng Port chính (Primary Port) của Server.",
+            "description": "Cổng cho S3 Web Server tĩnh. Nếu để trống, hệ thống sẽ tự động dùng Port chính của Server.",
             "env_variable": "WEB_PORT",
             "default_value": "",
             "user_viewable": true,
@@ -80,7 +70,7 @@
         },
         {
             "name": "Update Binary",
-            "description": "Nhập true nếu muốn script tự động tải và đè bản binary mới nhất về khi khởi động lại server. Nhập false để khởi động nhanh.",
+            "description": "Nhập true nếu muốn tự động kéo bản mới nhất của tác giả khairul169 khi khởi động.",
             "env_variable": "UPDATE_BINARY",
             "default_value": "false",
             "user_viewable": true,
