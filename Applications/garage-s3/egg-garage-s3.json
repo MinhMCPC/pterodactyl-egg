@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2026-07-14T14:15:00+07:00",
+    "exported_at": "2026-07-14T14:40:00+07:00",
     "name": "Garage S3",
     "author": "minhmcpc.tao@gmail.com",
     "description": "Garage is an open-source distributed object storage service tailored for self-hosting. It implements the Amazon S3 API.",
@@ -13,15 +13,16 @@
         "ghcr.io/ptero-eggs/yolks:debian": "ghcr.io/ptero-eggs/yolks:debian"
     },
     "file_denylist": [],
-    "startup": "bash -c 'if [ \"${UPDATE_BINARY}\" == \"true\" ] || [ \"${UPDATE_BINARY}\" == \"1\" ]; then echo \"Updating Garage binary...\" && ARCH=$([[ \"$(uname -m)\" == \"x86_64\" ]] && echo \"x86_64-unknown-linux-musl\" || echo \"aarch64-unknown-linux-musl\") && rm -f garage && wget -qO garage \"https://garagehq.deuxfleurs.fr/_releases/v0.9.1/${ARCH}/garage\" && chmod +x garage; fi; exec ./garage server'",    "config": {
+    "startup": "bash -c 'if [ \"${UPDATE_BINARY}\" == \"true\" ] || [ \"${UPDATE_BINARY}\" == \"1\" ]; then echo \"Updating Garage binary...\" && ARCH=$([[ \"$(uname -m)\" == \"x86_64\" ]] && echo \"x86_64-unknown-linux-musl\" || echo \"aarch64-unknown-linux-musl\") && rm -f garage && wget -qO garage \"https://garagehq.deuxfleurs.fr/_releases/v0.9.1/${ARCH}/garage\" && chmod +x garage; fi; exec ./garage -c garage.toml server'",
+    "config": {
         "files": "{}",
-        "startup": "{\r\n    \"done\": \"Garage is running\"\r\n}",
+        "startup": "{\r\n    \"done\": \"INFO garage::server: Garage is booting\"\r\n}",
         "logs": "{}",
         "stop": "^C"
     },
     "scripts": {
         "installation": {
-            "script": "#!/bin/bash\r\napt update\r\napt install -y curl wget unzip\r\ncd /mnt/server\r\n\r\n# Kéo file install từ github của bạn về và chạy\r\ncurl -sSL https://raw.githubusercontent.com/MinhMCPC/pterodactyl-egg/refs/heads/main/Applications/garage-s3/garage.sh | bash\r\n",
+            "script": "#!/bin/bash\r\napt update\r\napt install -y curl wget unzip\r\ncd /mnt/server\r\n\r\n# Kéo file install từ github của bạn về và chạy\r\ncurl -sSL https://raw.githubusercontent.com/MinhMCPC/pterodactyl-egg/refs/heads/main/Applications/garage.sh | bash\r\n",
             "container": "ghcr.io/ptero-eggs/installers:debian",
             "entrypoint": "bash"
         }
@@ -55,6 +56,16 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|numeric",
+            "field_type": "text"
+        },
+        {
+            "name": "Web Port",
+            "description": "Cổng cho S3 Web Server. Nếu để trống, hệ thống sẽ tự động dùng Port chính (Primary Port) của Server.",
+            "env_variable": "WEB_PORT",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|numeric",
             "field_type": "text"
         },
         {

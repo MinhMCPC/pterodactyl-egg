@@ -16,22 +16,25 @@ chmod +x garage
 echo "Creating meta and data directories..."
 mkdir -p meta data
 
-# Tạo file cấu hình garage.toml dựa trên các Port người dùng nhập lúc cài đặt
+# Tạo file cấu hình garage.toml
 if [ ! -f "garage.toml" ]; then
     echo "Generating default garage.toml..."
     RPC_SECRET=$(cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 64 | head -n 1)
     
-    # Lấy biến từ Pterodactyl Panel (Panel sẽ tự động truyền các biến này vào khi install)
+    # Lấy các biến Port từ Pterodactyl Panel
     S3=${S3_API_PORT:-3900}
     RPC=${RPC_PORT:-3901}
     ADMIN=${ADMIN_PORT:-3903}
     
+    # Ưu tiên lấy biến WEB_PORT, nếu rỗng thì dùng thẳng SERVER_PORT (Port mặc định của Pterodactyl)
+    WEB=${WEB_PORT:-$SERVER_PORT}
+    
     cat <<EOF > garage.toml
-metadata_dir = "/mnt/server/meta"
-data_dir = "/mnt/server/data"
+metadata_dir = "meta"
+data_dir = "data"
 db_engine = "lmdb"
 
-replication_factor = 1
+replication_mode = "none"
 
 rpc_bind_addr = "[::]:${RPC}"
 rpc_public_addr = "127.0.0.1:${RPC}"
@@ -43,7 +46,7 @@ api_bind_addr = "[::]:${S3}"
 root_domain = ".s3.garage.localhost"
 
 [s3_web]
-bind_addr = "[::]:3904"
+bind_addr = "[::]:${WEB}"
 root_domain = ".web.garage.localhost"
 index = "index.html"
 
