@@ -1,28 +1,16 @@
 #!/bin/bash
-echo "Starting Garage WebUI (Integrated) Installation..."
+# Đang chạy trong môi trường Install của Pterodactyl
+echo "Starting Garage S3 Installation..."
 
 # Di chuyển vào thư mục gốc của server
 cd /mnt/server
 
-echo "Fetching latest version tag from GitHub..."
-# Lấy phiên bản mới nhất (vd: 1.1.0)
-LATEST_VERSION=$(curl -sI https://github.com/khairul169/garage-webui/releases/latest | grep -i location: | rev | cut -d / -f 1 | rev | tr -dc a-zA-Z0-9.-)
+# Tải Garage Binary bằng biến Version
+echo "Downloading Garage binary..."
+ARCH=$([[ "$(uname -m)" == "x86_64" ]] && echo "x86_64-unknown-linux-musl" || echo "aarch64-unknown-linux-musl")
+VERSION=${GARAGE_VERSION:-v0.9.1}
 
-if [ -z "$LATEST_VERSION" ]; then
-    echo "Failed to fetch latest version. Fallback to 1.1.0..."
-    LATEST_VERSION="1.1.0"
-fi
-
-echo "Latest version found: ${LATEST_VERSION}"
-
-# Xác định kiến trúc 
-ARCH=$([[ "$(uname -m)" == "x86_64" ]] && echo "amd64" || echo "arm64")
-
-# Ghép URL và tải file (Đã fix thêm chữ v vào tên file)
-DOWNLOAD_URL="https://github.com/khairul169/garage-webui/releases/download/${LATEST_VERSION}/garage-webui-v${LATEST_VERSION#v}-linux-${ARCH}"
-echo "Downloading from: ${DOWNLOAD_URL}"
-
-wget -qO garage "${DOWNLOAD_URL}"
+wget -qO garage "https://garagehq.deuxfleurs.fr/_releases/${VERSION}/${ARCH}/garage"
 chmod +x garage
 
 # Tạo thư mục dữ liệu
@@ -34,7 +22,7 @@ if [ ! -f "garage.toml" ]; then
     echo "Generating default garage.toml..."
     RPC_SECRET=$(cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 64 | head -n 1)
     
-    # Lấy các biến Port
+    # Lấy các biến Port từ Pterodactyl Panel
     S3=${S3_API_PORT:-3900}
     RPC=${RPC_PORT:-3901}
     ADMIN=${ADMIN_PORT:-3903}
