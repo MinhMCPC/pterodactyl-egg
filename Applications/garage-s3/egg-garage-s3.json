@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2026-07-14T16:30:00+07:00",
+    "exported_at": "2026-07-14T17:00:00+07:00",
     "name": "Garage S3 WebUI",
     "author": "minhmcpc.tao@gmail.com",
     "description": "Garage is an open-source distributed object storage service tailored for self-hosting. This egg uses the khairul169 fork with integrated WebUI.",
@@ -13,7 +13,7 @@
         "ghcr.io/ptero-eggs/yolks:debian": "ghcr.io/ptero-eggs/yolks:debian"
     },
     "file_denylist": [],
-    "startup": "bash -c 'if [ \"${UPDATE_BINARY}\" == \"true\" ] || [ \"${UPDATE_BINARY}\" == \"1\" ]; then echo \"Updating Garage...\"; VER=$(curl -sI https://github.com/khairul169/garage-webui/releases/latest | grep -i location: | rev | cut -d / -f 1 | rev | tr -dc a-zA-Z0-9.-); ARCH=$([[ \"$(uname -m)\" == \"x86_64\" ]] && echo \"amd64\" || echo \"arm64\"); rm -f garage; wget -qO garage \"https://github.com/khairul169/garage-webui/releases/download/${VER}/garage-webui-${VER}-linux-${ARCH}\"; chmod +x garage; fi; exec ./garage -c garage.toml server'",
+    "startup": "bash -c 'if [ \"${UPDATE_BINARY}\" == \"true\" ] || [ \"${UPDATE_BINARY}\" == \"1\" ]; then echo \"Updating Garage...\"; VER=$(curl -sI https://github.com/khairul169/garage-webui/releases/latest | grep -i location: | rev | cut -d / -f 1 | rev | tr -dc a-zA-Z0-9.-); ARCH=$([[ \"$(uname -m)\" == \"x86_64\" ]] && echo \"amd64\" || echo \"arm64\"); rm -f garage; wget -qO garage \"https://github.com/khairul169/garage-webui/releases/download/${VER}/garage-webui-v${VER#v}-linux-${ARCH}\"; chmod +x garage; fi; exec ./garage -c garage.toml server'",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"INFO garage::server: Garage is booting\"\r\n}",
@@ -22,7 +22,7 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!/bin/bash\r\napt update\r\napt install -y curl wget unzip\r\ncd /mnt/server\r\n\r\ncurl -sSL https://raw.githubusercontent.com/MinhMCPC/pterodactyl-egg/main/Applications/garage-s3/garage.sh | bash\r\n",
+            "script": "#!/bin/bash\r\napt update\r\napt install -y curl wget unzip jq\r\ncd /mnt/server\r\n\r\ncurl -sSL https://raw.githubusercontent.com/MinhMCPC/pterodactyl-egg/main/Applications/garage-s3/garage.sh | bash\r\n",
             "container": "ghcr.io/ptero-eggs/installers:debian",
             "entrypoint": "bash"
         }

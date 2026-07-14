@@ -5,12 +5,12 @@ echo "Starting Garage WebUI (Integrated) Installation..."
 cd /mnt/server
 
 echo "Fetching latest version tag from GitHub..."
-# Lấy phiên bản mới nhất bằng cách đọc Redirect Header của GitHub (Không dùng ngoặc kép để tránh lỗi)
+# Lấy phiên bản mới nhất (vd: 1.1.0)
 LATEST_VERSION=$(curl -sI https://github.com/khairul169/garage-webui/releases/latest | grep -i location: | rev | cut -d / -f 1 | rev | tr -dc a-zA-Z0-9.-)
 
 if [ -z "$LATEST_VERSION" ]; then
-    echo "Failed to fetch latest version. Fallback to v1.1.0..."
-    LATEST_VERSION="v1.1.0"
+    echo "Failed to fetch latest version. Fallback to 1.1.0..."
+    LATEST_VERSION="1.1.0"
 fi
 
 echo "Latest version found: ${LATEST_VERSION}"
@@ -18,8 +18,8 @@ echo "Latest version found: ${LATEST_VERSION}"
 # Xác định kiến trúc 
 ARCH=$([[ "$(uname -m)" == "x86_64" ]] && echo "amd64" || echo "arm64")
 
-# Ghép URL và tải file
-DOWNLOAD_URL="https://github.com/khairul169/garage-webui/releases/download/${LATEST_VERSION}/garage-webui-${LATEST_VERSION}-linux-${ARCH}"
+# Ghép URL và tải file (Đã fix thêm chữ v vào tên file)
+DOWNLOAD_URL="https://github.com/khairul169/garage-webui/releases/download/${LATEST_VERSION}/garage-webui-v${LATEST_VERSION#v}-linux-${ARCH}"
 echo "Downloading from: ${DOWNLOAD_URL}"
 
 wget -qO garage "${DOWNLOAD_URL}"
