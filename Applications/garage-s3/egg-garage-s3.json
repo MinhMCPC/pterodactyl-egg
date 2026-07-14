@@ -22,7 +22,7 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!/bin/bash\r\napt update\r\napt install -y curl wget unzip\r\ncd /mnt/server\r\n\r\n# Kéo file install từ github của bạn về và chạy\r\ncurl -sSL https://raw.githubusercontent.com/MinhMCPC/pterodactyl-egg/refs/heads/main/Applications/garage.sh | bash\r\n",
+            "script": "#!/bin/bash\r\napt update\r\napt install -y curl wget unzip\r\ncd /mnt/server\r\n\r\n# Kéo file install từ github của bạn về và chạy\r\ncurl -sSL https://raw.githubusercontent.com/MinhMCPC/pterodactyl-egg/refs/heads/main/Applications/garage-s3/garage.sh | bash\r\n",
             "container": "ghcr.io/ptero-eggs/installers:debian",
             "entrypoint": "bash"
         }
@@ -32,7 +32,7 @@
             "name": "Garage Version",
             "description": "Phiên bản Garage S3 muốn cài đặt/cập nhật.",
             "env_variable": "GARAGE_VERSION",
-            "default_value": "v0.9.1",
+            "default_value": "v2.3.0",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string",
