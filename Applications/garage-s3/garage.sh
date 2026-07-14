@@ -5,11 +5,12 @@ echo "Starting Garage S3 Installation..."
 # Di chuyển vào thư mục gốc của server
 cd /mnt/server
 
-# Tải Garage Binary
+# Tải Garage Binary bằng biến Version
 echo "Downloading Garage binary..."
 ARCH=$([[ "$(uname -m)" == "x86_64" ]] && echo "x86_64-unknown-linux-musl" || echo "aarch64-unknown-linux-musl")
-GARAGE_VERSION="v0.9.1"
-wget -qO garage "https://garagehq.deuxfleurs.fr/_releases/${GARAGE_VERSION}/${ARCH}/garage"
+VERSION=${GARAGE_VERSION:-v0.9.1}
+
+wget -qO garage "https://garagehq.deuxfleurs.fr/_releases/${VERSION}/${ARCH}/garage"
 chmod +x garage
 
 # Tạo thư mục dữ liệu
@@ -25,8 +26,6 @@ if [ ! -f "garage.toml" ]; then
     S3=${S3_API_PORT:-3900}
     RPC=${RPC_PORT:-3901}
     ADMIN=${ADMIN_PORT:-3903}
-    
-    # Ưu tiên lấy biến WEB_PORT, nếu rỗng thì dùng thẳng SERVER_PORT (Port mặc định của Pterodactyl)
     WEB=${WEB_PORT:-$SERVER_PORT}
     
     cat <<EOF > garage.toml

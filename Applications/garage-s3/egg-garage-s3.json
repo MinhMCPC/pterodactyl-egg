@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2026-07-14T14:40:00+07:00",
+    "exported_at": "2026-07-14T15:00:00+07:00",
     "name": "Garage S3",
     "author": "minhmcpc.tao@gmail.com",
     "description": "Garage is an open-source distributed object storage service tailored for self-hosting. It implements the Amazon S3 API.",
@@ -13,7 +13,7 @@
         "ghcr.io/ptero-eggs/yolks:debian": "ghcr.io/ptero-eggs/yolks:debian"
     },
     "file_denylist": [],
-    "startup": "bash -c 'if [ \"${UPDATE_BINARY}\" == \"true\" ] || [ \"${UPDATE_BINARY}\" == \"1\" ]; then echo \"Updating Garage binary...\" && ARCH=$([[ \"$(uname -m)\" == \"x86_64\" ]] && echo \"x86_64-unknown-linux-musl\" || echo \"aarch64-unknown-linux-musl\") && rm -f garage && wget -qO garage \"https://garagehq.deuxfleurs.fr/_releases/v0.9.1/${ARCH}/garage\" && chmod +x garage; fi; exec ./garage -c garage.toml server'",
+    "startup": "bash -c 'if [ \"${UPDATE_BINARY}\" == \"true\" ] || [ \"${UPDATE_BINARY}\" == \"1\" ]; then echo \"Updating Garage binary to ${GARAGE_VERSION}...\" && ARCH=$([[ \"$(uname -m)\" == \"x86_64\" ]] && echo \"x86_64-unknown-linux-musl\" || echo \"aarch64-unknown-linux-musl\") && rm -f garage && wget -qO garage \"https://garagehq.deuxfleurs.fr/_releases/${GARAGE_VERSION}/${ARCH}/garage\" && chmod +x garage; fi; exec ./garage -c garage.toml server'",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"INFO garage::server: Garage is booting\"\r\n}",
@@ -28,6 +28,16 @@
         }
     },
     "variables": [
+        {
+            "name": "Garage Version",
+            "description": "Phiên bản Garage S3 muốn cài đặt/cập nhật.",
+            "env_variable": "GARAGE_VERSION",
+            "default_value": "v0.9.1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string",
+            "field_type": "text"
+        },
         {
             "name": "S3 API Port",
             "description": "Cổng để upload/download file.",
