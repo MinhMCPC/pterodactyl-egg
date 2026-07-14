@@ -5,8 +5,8 @@ echo "Starting Garage WebUI (Integrated) Installation..."
 cd /mnt/server
 
 echo "Fetching latest version tag from GitHub..."
-# Lấy phiên bản mới nhất tự động từ API GitHub
-LATEST_VERSION=$(curl -s https://api.github.com/repos/khairul169/garage-webui/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+# Lấy phiên bản mới nhất bằng cách đọc Redirect Header của GitHub (Không dùng ngoặc kép để tránh lỗi)
+LATEST_VERSION=$(curl -sI https://github.com/khairul169/garage-webui/releases/latest | grep -i location: | rev | cut -d / -f 1 | rev | tr -dc a-zA-Z0-9.-)
 
 if [ -z "$LATEST_VERSION" ]; then
     echo "Failed to fetch latest version. Fallback to v1.1.0..."
@@ -15,7 +15,7 @@ fi
 
 echo "Latest version found: ${LATEST_VERSION}"
 
-# Xác định kiến trúc theo định dạng mới (amd64 / arm64)
+# Xác định kiến trúc 
 ARCH=$([[ "$(uname -m)" == "x86_64" ]] && echo "amd64" || echo "arm64")
 
 # Ghép URL và tải file
@@ -34,7 +34,7 @@ if [ ! -f "garage.toml" ]; then
     echo "Generating default garage.toml..."
     RPC_SECRET=$(cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 64 | head -n 1)
     
-    # Lấy các biến Port từ Pterodactyl Panel
+    # Lấy các biến Port
     S3=${S3_API_PORT:-3900}
     RPC=${RPC_PORT:-3901}
     ADMIN=${ADMIN_PORT:-3903}
