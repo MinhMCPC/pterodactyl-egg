@@ -9,7 +9,7 @@ cd /mnt/server
 echo "Downloading Garage binary..."
 ARCH=$([[ "$(uname -m)" == "x86_64" ]] && echo "x86_64-unknown-linux-musl" || echo "aarch64-unknown-linux-musl")
 GARAGE_VERSION="v0.9.1"
-wget -qO garage "https://garagehq.deuxfleurs.fr/_releases/${GARAGE_VERSION}/garage-${GARAGE_VERSION}-${ARCH}"
+wget -qO garage "https://garagehq.deuxfleurs.fr/_releases/${GARAGE_VERSION}/${ARCH}/garage"
 chmod +x garage
 
 # Tạo thư mục dữ liệu
